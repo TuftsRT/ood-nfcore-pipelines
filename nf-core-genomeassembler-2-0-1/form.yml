@@ -1,0 +1,667 @@
+---
+cluster: "pax"
+form_header: |
+  > **Saved form values**
+  >
+  > This app automatically saves your form inputs between sessions.
+  >
+  > To clear the saved form values for this app, use the [cache reset utility](/pun/sys/cache_reset/?app_slug=nf-core-genomeassembler-2-0-1&return_url=/pun/sys/dashboard/batch_connect/sys/nf-core-genomeassembler-2-0-1/session_contexts/new).
+
+attributes:
+  bc_num_hours:
+    label: Number of hours
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Requested walltime for the launch job.
+
+  bc_email_on_started:
+    label: Email when job starts
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Send an email notification when the Open OnDemand launch job starts.
+
+  nextflow_version:
+    label: Nextflow version
+    widget: select
+    options:
+      - ["26.10.0", "26.10.0"]
+      - ["26.04.3", "26.04.3"]
+      - ["25.10.3", "25.10.3"]
+      - ["25.04.0", "25.04.0"]
+    help: Use an older Nextflow version when running previous nf-core pipeline releases.
+
+  partition:
+    widget: "select"
+    label: "Partition"
+    help: >-
+      Jobs submitted to the 'preempt' partition may be automatically killed to allow
+      higher-priority jobs to run. Select a specific lab partition if you belong to
+      that group.
+    options:
+      - ["batch", "batch"]
+
+  num_cores:
+    label: Number of cores
+    widget: number_field
+    value: 4
+    min: 1
+    step: 1
+    help: CPU count used for single-node local execution.
+
+  num_memory:
+    label: Amount of memory (GB)
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Memory requested for single-node local execution.
+
+  executor:
+    label: Which Nextflow executor should be used?
+    widget: select
+    options:
+      - ["slurm", "slurm", data-hide-partition: true, data-hide-num-cores: true, data-hide-num-memory: true]
+      - ["local", "local"]
+    help: |
+      With `slurm`, the pipeline uses its configured scheduler profile.
+      With `local`, tasks run on the submitted node using a generated config.
+
+  workdir:
+    label: Working directory
+    widget: path_selector
+    required: false
+    directory: "/cluster/tufts"
+    favorites:
+      - "/cluster/tufts"
+    help: Directory where the Nextflow launch should run.
+
+  resume:
+    label: Resume previous run
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Resume a previous run if a matching Nextflow work directory exists.
+
+
+  input_output_options:
+    label: 'Input/output options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-input-when-un-checked: true
+        hide-outdir-when-un-checked: true
+    help: 'Define where the pipeline should find input data and save output data.'
+
+  input:
+    label: 'input'
+    required: true
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'Path to comma-separated file containing information about the samples in the experiment.'
+
+  outdir:
+    label: 'outdir'
+    required: true
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.'
+
+  reference_parameters:
+    label: 'Reference Parameters'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-ref_fasta-when-un-checked: true
+        hide-ref_gff-when-un-checked: true
+    help: 'Options controlling pipeline behavior'
+
+  ref_fasta:
+    label: 'ref_fasta'
+    widget: text_field
+    help: 'Path to reference genome seqeunce (fasta)'
+
+  ref_gff:
+    label: 'ref_gff'
+    widget: text_field
+    help: 'Path to reference genome annotations (gff)'
+
+  assembly_options:
+    label: 'Assembly options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-strategy-when-un-checked: true
+        hide-assembler-when-un-checked: true
+        hide-assembly_scaffolding_order-when-un-checked: true
+        hide-genome_size-when-un-checked: true
+        hide-flye_mode-when-un-checked: true
+        hide-flye_args-when-un-checked: true
+        hide-hifiasm_args-when-un-checked: true
+        hide-assembler_ont-when-un-checked: true
+        hide-assembler_ont_args-when-un-checked: true
+        hide-assembler_hifi-when-un-checked: true
+        hide-assembler_hifi_args-when-un-checked: true
+    help: 'Options controlling assembly'
+
+  strategy:
+    label: 'strategy'
+    widget: text_field
+    value: 'single'
+    help: 'Assembly strategy to use. Valid choices are `''single''`, `''hybrid''` and `''scaffold''`.'
+
+  assembler:
+    label: 'assembler'
+    widget: select
+    options:
+      - ['hifiasm', 'hifiasm']
+      - ['flye', 'flye']
+      - ['flye_hifiasm', 'flye_hifiasm']
+      - ['hifiasm_hifiasm', 'hifiasm_hifiasm']
+      - ['flye_flye', 'flye_flye']
+      - ['hifiasm_flye', 'hifiasm_flye']
+    help: 'Assembler to use. Valid choices depend on strategy; for single either `''flye''` or `''hifiasm''`, hybrid can be done with `''hifiasm''` and for scaffolded assembly provide the names of the assemblers separated with an underscore. The first assembler will be used for ONT reads, the second for HiFi reads see below: `asembler_ont` and `assembler_hifi`.'
+
+  assembly_scaffolding_order:
+    label: 'assembly_scaffolding_order'
+    widget: select
+    options:
+      - ['ont_on_hifi', 'ont_on_hifi']
+      - ['hifi_on_ont', 'hifi_on_ont']
+    help: 'When `strategy` is ''scaffold'', which assembly should be scaffolded onto which?'
+
+  genome_size:
+    label: 'genome_size'
+    widget: text_field
+    help: 'Expected genome size, optional.'
+
+  flye_mode:
+    label: 'flye_mode'
+    widget: select
+    options:
+      - ['--nano-hq', '--nano-hq']
+      - ['--pacbio-raw', '--pacbio-raw']
+      - ['--pacbio-corr', '--pacbio-corr']
+      - ['--pacbio-hifi', '--pacbio-hifi']
+      - ['--nano-raw', '--nano-raw']
+      - ['--nano-corr', '--nano-corr']
+    help: 'Flye assembly mode.'
+
+  flye_args:
+    label: 'flye_args'
+    widget: text_field
+    help: 'Additional args for `flye`.'
+
+  hifiasm_args:
+    label: 'hifiasm_args'
+    widget: text_field
+    help: 'Extra arguments passed to `hifiasm`'
+
+  assembler_ont:
+    label: 'assembler_ont'
+    widget: text_field
+    help: '`assembler_ont` assembles ONT reads. This option is mainly useful when building more complex samplesheets.'
+
+  assembler_ont_args:
+    label: 'assembler_ont_args'
+    widget: text_field
+    help: 'Arguments to be passed to `assembler_ont` (ONT)'
+
+  assembler_hifi:
+    label: 'assembler_hifi'
+    widget: text_field
+    help: '`assembler_hifi` assembles HiFi reads. This option is mainly useful when building more complex samplesheets.'
+
+  assembler_hifi_args:
+    label: 'assembler_hifi_args'
+    widget: text_field
+    help: 'Arguments to be passed to `assembler_hifi` (HiFi).'
+
+  long_read_preprocessing:
+    label: 'Long-read preprocessing'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-ontreads-when-un-checked: true
+        hide-ont_collect-when-un-checked: true
+        hide-ont_adapters-when-un-checked: true
+        hide-ont_fastplong_args-when-un-checked: true
+        hide-hifireads-when-un-checked: true
+        hide-hifi_adapters-when-un-checked: true
+        hide-hifi_fastplong_args-when-un-checked: true
+        hide-jellyfish-when-un-checked: true
+        hide-jellyfish_k-when-un-checked: true
+        hide-jellyfish_size-when-un-checked: true
+
+  ontreads:
+    label: 'ontreads'
+    widget: text_field
+    help: 'Path to ONT reads.'
+
+  ont_collect:
+    label: 'ont_collect'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Collect ONT reads from several files.'
+
+  ont_adapters:
+    label: 'ont_adapters'
+    widget: text_field
+    help: 'Adapters for ONT read-trimming.'
+
+  ont_fastplong_args:
+    label: 'ont_fastplong_args'
+    widget: text_field
+    help: 'Additional args to be passed to fastplong for ONT reads.'
+
+  hifireads:
+    label: 'hifireads'
+    widget: text_field
+    help: 'Path to HiFi reads.'
+
+  hifi_adapters:
+    label: 'hifi_adapters'
+    widget: text_field
+    help: 'Adapters for HiFi read-trimming.'
+
+  hifi_fastplong_args:
+    label: 'hifi_fastplong_args'
+    widget: text_field
+    help: 'Additional args to be passed to fastplong for HiFi reads.'
+
+  jellyfish:
+    label: 'jellyfish'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Run jellyfish and genomescope (recommended).'
+
+  jellyfish_k:
+    label: 'jellyfish_k'
+    widget: number_field
+    value: 21
+    step: 1
+    help: 'Value of k used during k-mer analysis with `jellyfish`.'
+
+  jellyfish_size:
+    label: 'jellyfish_size'
+    widget: text_field
+    value: '200M'
+    help: 'Initial hash size used by `jellyfish count`.'
+
+  polishing_options:
+    label: 'Polishing options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-polish-when-un-checked: true
+        hide-polish_pilon-when-un-checked: true
+        hide-polish_dorado-when-un-checked: true
+        hide-polish_medaka-when-un-checked: true
+        hide-medaka_model-when-un-checked: true
+    help: 'Polishing options'
+
+  polish:
+    label: 'polish'
+    widget: select
+    options:
+      - ['', '']
+      - ['pilon', 'pilon']
+      - ['dorado', 'dorado']
+      - ['medaka', 'medaka']
+      - ['dorado+pilon', 'dorado+pilon']
+      - ['medaka+pilon', 'medaka+pilon']
+    help: 'String describing the polishing strategy. Takes priority over boolean selectors. If missing will be created from boolean selectors.'
+
+  polish_pilon:
+    label: 'polish_pilon'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Polish assembly with `pilon`. Requires short reads.'
+
+  polish_dorado:
+    label: 'polish_dorado'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Polish assembly with `dorado` (ONT only).'
+
+  polish_medaka:
+    label: 'polish_medaka'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Polish assembly with `medaka` (ONT only).'
+
+  medaka_model:
+    label: 'medaka_model'
+    widget: text_field
+    help: 'Model to use with `medaka`.'
+
+  scaffolding_options:
+    label: 'Scaffolding options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-scaffold_longstitch-when-un-checked: true
+        hide-scaffold_links-when-un-checked: true
+        hide-scaffold_ragtag-when-un-checked: true
+        hide-scaffold_hic-when-un-checked: true
+        hide-hic_aligner-when-un-checked: true
+    help: 'Scaffolding options'
+
+  scaffold_longstitch:
+    label: 'scaffold_longstitch'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Scaffold with `longstitch`.'
+
+  scaffold_links:
+    label: 'scaffold_links'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Scaffolding with `links`.'
+
+  scaffold_ragtag:
+    label: 'scaffold_ragtag'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Scaffold with `ragtag` (requires reference).'
+
+  scaffold_hic:
+    label: 'scaffold_hic'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Scaffold using HiC reads using `yahs` (requires reads).'
+
+  hic_aligner:
+    label: 'hic_aligner'
+    widget: select
+    options:
+      - ['bwa-mem2', 'bwa-mem2']
+      - ['minimap2', 'minimap2']
+    help: 'Aligner to use for HiC reads; default: `''bwa-mem2''`.'
+
+  qc_options:
+    label: 'QC options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-merqury-when-un-checked: true
+        hide-qc_reads-when-un-checked: true
+        hide-busco-when-un-checked: true
+        hide-busco_db-when-un-checked: true
+        hide-busco_lineage-when-un-checked: true
+        hide-quast-when-un-checked: true
+        hide-ref_map_bam-when-un-checked: true
+        hide-assembly-when-un-checked: true
+        hide-assembly_map_bam-when-un-checked: true
+        hide-csi_index_size-when-un-checked: true
+    help: 'Options for QC tools'
+
+  merqury:
+    label: 'merqury'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    value: false
+    help: 'Run `merqury` if short reads are provided.'
+
+  qc_reads:
+    label: 'qc_reads'
+    widget: select
+    options:
+      - ['ont', 'ont']
+      - ['hifi', 'hifi']
+    help: 'Long reads that should be used for QC when both ONT and HiFi reads are provided. Options are `''ont''` or `''hifi''`.'
+
+  busco:
+    label: 'busco'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Run `BUSCO`.'
+
+  busco_db:
+    label: 'busco_db'
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'Path to `BUSCO` data-base (optional).'
+
+  busco_lineage:
+    label: 'busco_lineage'
+    widget: text_field
+    value: 'auto_euk'
+    help: '`BUSCO` lineage to use.'
+
+  quast:
+    label: 'quast'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Run `QUAST`.'
+
+  ref_map_bam:
+    label: 'ref_map_bam'
+    widget: text_field
+    help: 'A mapping (bam) of reads mapped to the reference can be provided for QC. If provided, alignment to reference fasta will not run.'
+
+  assembly:
+    label: 'assembly'
+    widget: text_field
+    help: 'Can be used to provide existing assembly will skip assembly and perform downstream steps including QC.'
+
+  assembly_map_bam:
+    label: 'assembly_map_bam'
+    widget: text_field
+    help: 'A mapping (bam) of reads mapped to the provided assembly can be specified for QC. If provided, alignment to the provided assembly fasta will not run,'
+
+  csi_index_size:
+    label: 'csi_index_size'
+    widget: number_field
+    value: 14
+    step: 1
+    help: 'Index size to use for csi index (default: 14), creating and index of size 2^csi_index_size. See [samtools index documentation](https://www.htslib.org/doc/samtools-index.html) for details.'
+
+  annotations_options:
+    label: 'Annotations options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-lift_annotations-when-un-checked: true
+    help: 'Options controlling annotation liftover'
+
+  lift_annotations:
+    label: 'lift_annotations'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    value: false
+    help: 'Lift-over annotations (requires `ref_gff`).'
+
+  short_read_options:
+    label: 'Short read options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-use_short_reads-when-un-checked: true
+        hide-shortread_trim-when-un-checked: true
+        hide-meryl_k-when-un-checked: true
+        hide-shortread_f-when-un-checked: true
+        hide-shortread_r-when-un-checked: true
+        hide-paired-when-un-checked: true
+    help: 'Options for short reads'
+
+  use_short_reads:
+    label: 'use_short_reads'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Use short reads.'
+
+  shortread_trim:
+    label: 'shortread_trim'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Trim short reads.'
+
+  meryl_k:
+    label: 'meryl_k'
+    widget: number_field
+    value: 21
+    step: 1
+    help: 'kmer length for `meryl` / `merqury`.'
+
+  shortread_f:
+    label: 'shortread_F'
+    widget: text_field
+    help: 'Path to forward short reads.'
+
+  shortread_r:
+    label: 'shortread_R'
+    widget: text_field
+    help: 'Path to reverse short reads.'
+
+  paired:
+    label: 'paired'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    value: false
+    help: 'Are shortreads paired.'
+
+  hic_options:
+    label: 'HiC short read options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-hic_trim-when-un-checked: true
+        hide-hic_f-when-un-checked: true
+        hide-hic_r-when-un-checked: true
+    help: 'Options for HiC short reads'
+
+  hic_trim:
+    label: 'hic_trim'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    value: false
+    help: 'Trim HiC short reads.'
+
+  hic_f:
+    label: 'hic_F'
+    widget: text_field
+    help: 'Path to forward HiC short reads.'
+
+  hic_r:
+    label: 'hic_R'
+    widget: text_field
+    help: 'Path to reverse HiC short reads.'
+
+form:
+  - bc_num_hours
+  - nextflow_version
+  - executor
+  - partition
+  - num_cores
+  - num_memory
+  - workdir
+  - input_output_options
+  - input
+  - outdir
+  - reference_parameters
+  - ref_fasta
+  - ref_gff
+  - assembly_options
+  - strategy
+  - assembler
+  - assembly_scaffolding_order
+  - genome_size
+  - flye_mode
+  - flye_args
+  - hifiasm_args
+  - assembler_ont
+  - assembler_ont_args
+  - assembler_hifi
+  - assembler_hifi_args
+  - long_read_preprocessing
+  - ontreads
+  - ont_collect
+  - ont_adapters
+  - ont_fastplong_args
+  - hifireads
+  - hifi_adapters
+  - hifi_fastplong_args
+  - jellyfish
+  - jellyfish_k
+  - jellyfish_size
+  - polishing_options
+  - polish
+  - polish_pilon
+  - polish_dorado
+  - polish_medaka
+  - medaka_model
+  - scaffolding_options
+  - scaffold_longstitch
+  - scaffold_links
+  - scaffold_ragtag
+  - scaffold_hic
+  - hic_aligner
+  - qc_options
+  - merqury
+  - qc_reads
+  - busco
+  - busco_db
+  - busco_lineage
+  - quast
+  - ref_map_bam
+  - assembly
+  - assembly_map_bam
+  - csi_index_size
+  - annotations_options
+  - lift_annotations
+  - short_read_options
+  - use_short_reads
+  - shortread_trim
+  - meryl_k
+  - shortread_f
+  - shortread_r
+  - paired
+  - hic_options
+  - hic_trim
+  - hic_f
+  - hic_r
+  - resume
+  - bc_email_on_started

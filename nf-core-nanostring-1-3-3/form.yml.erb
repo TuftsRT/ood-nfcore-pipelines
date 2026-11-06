@@ -1,0 +1,236 @@
+---
+cluster: "pax"
+form_header: |
+  > **Saved form values**
+  >
+  > This app automatically saves your form inputs between sessions.
+  >
+  > To clear the saved form values for this app, use the [cache reset utility](/pun/sys/cache_reset/?app_slug=nf-core-nanostring-1-3-3&return_url=/pun/sys/dashboard/batch_connect/sys/nf-core-nanostring-1-3-3/session_contexts/new).
+
+attributes:
+  bc_num_hours:
+    label: Number of hours
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Requested walltime for the launch job.
+
+  bc_email_on_started:
+    label: Email when job starts
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Send an email notification when the Open OnDemand launch job starts.
+
+  nextflow_version:
+    label: Nextflow version
+    widget: select
+    options:
+      - ["26.04.3", "26.04.3"]
+      - ["25.10.3", "25.10.3"]
+      - ["25.04.0", "25.04.0"]
+    help: Use an older Nextflow version when running previous nf-core pipeline releases.
+
+<%= File.read("/etc/ood/config/apps/dashboard/batch_connect/partials/cpu_partition.yml").indent(2) %>
+
+  num_cores:
+    label: Number of cores
+    widget: number_field
+    value: 4
+    min: 1
+    step: 1
+    help: CPU count used for single-node local execution.
+
+  num_memory:
+    label: Amount of memory (GB)
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Memory requested for single-node local execution.
+
+  executor:
+    label: Which Nextflow executor should be used?
+    widget: select
+    options:
+      - ["slurm", "slurm", data-hide-partition: true, data-hide-num-cores: true, data-hide-num-memory: true]
+      - ["local", "local"]
+    help: |
+      With `slurm`, the pipeline uses its configured scheduler profile.
+      With `local`, tasks run on the submitted node using a generated config.
+
+  workdir:
+    label: Working directory
+    widget: path_selector
+    required: false
+    directory: "/cluster/tufts"
+    favorites:
+      - "/cluster/tufts"
+    help: Directory where the Nextflow launch should run.
+
+  resume:
+    label: Resume previous run
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Resume a previous run if a matching Nextflow work directory exists.
+
+
+  input_output_options:
+    label: 'Input/output options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-input-when-un-checked: true
+        hide-outdir-when-un-checked: true
+    help: 'Define where the pipeline should find input data and save output data.'
+
+  input:
+    label: 'input'
+    required: true
+    widget: path_selector
+    directory: "<%= ENV.fetch('NF2OOD_DEFAULT_DIRECTORY', ENV.fetch('HOME', '/')) %>"
+    favorites:
+      - "<%= ENV.fetch('HOME', '/') %>"
+    help: 'Path to comma-separated file containing information about the samples in the experiment.'
+
+  outdir:
+    label: 'outdir'
+    required: true
+    widget: path_selector
+    directory: "<%= ENV.fetch('NF2OOD_DEFAULT_DIRECTORY', ENV.fetch('HOME', '/')) %>"
+    favorites:
+      - "<%= ENV.fetch('HOME', '/') %>"
+    help: 'The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.'
+
+  processing_options:
+    label: 'Processing options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-heatmap_id_column-when-un-checked: true
+        hide-heatmap_genes_to_filter-when-un-checked: true
+    help: 'Define how the pipeline should process the data.'
+
+  heatmap_id_column:
+    label: 'heatmap_id_column'
+    widget: text_field
+    value: 'SAMPLE_ID'
+    help: 'The column used for heatmap generation, specifying the rows. The values in this column have to be unique.'
+
+  heatmap_genes_to_filter:
+    label: 'heatmap_genes_to_filter'
+    widget: text_field
+    help: 'Path to YAML file (list, one item per line) to specify which genes should be used for the gene-count heatmap.'
+
+  normalization_parameters:
+    label: 'Normalization Parameters'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-normalization_method-when-un-checked: true
+    help: 'Parameters that influence normalization outcome'
+
+  normalization_method:
+    label: 'normalization_method'
+    widget: select
+    options:
+      - ['GEO', 'GEO']
+      - ['GLM', 'GLM']
+    help: 'The method to use for normalization of nCounter data.'
+
+  gene_score_computation:
+    label: 'Gene Score Computation'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-gene_score_method-when-un-checked: true
+        hide-gene_score_yaml-when-un-checked: true
+    help: 'Configuration to define how to compute gene scores'
+
+  gene_score_method:
+    label: 'gene_score_method'
+    widget: text_field
+    value: 'plage.dir'
+    help: 'This selects the algorithm for computing the respective gene score. Default is ''plage.dir''.'
+
+  gene_score_yaml:
+    label: 'gene_score_yaml'
+    help: 'This sets the YAML to be used for computing the gene scores. Needs both a name for each set of genes and respective genes to be selected.'
+
+  skipping_options:
+    label: 'Skipping Options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-skip_heatmap-when-un-checked: true
+    help: 'Allows to specify options to skip parts of the pipeline'
+
+  skip_heatmap:
+    label: 'skip_heatmap'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Skip creating the heatmap'
+
+  reference_genome_options:
+    label: 'Reference genome options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-genome-when-un-checked: true
+        hide-igenomes_ignore-when-un-checked: true
+        hide-igenomes_base-when-un-checked: true
+    help: 'Reference genome related files and options required for the workflow.'
+
+  genome:
+    label: 'genome'
+    widget: text_field
+    help: 'Name of iGenomes reference.'
+
+  igenomes_ignore:
+    label: 'igenomes_ignore'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not load the iGenomes reference config.'
+
+  igenomes_base:
+    label: 'igenomes_base'
+    widget: path_selector
+    value: 's3://ngi-igenomes/igenomes/'
+    directory: "<%= ENV.fetch('NF2OOD_DEFAULT_DIRECTORY', ENV.fetch('HOME', '/')) %>"
+    favorites:
+      - "<%= ENV.fetch('HOME', '/') %>"
+    help: 'The base path to the igenomes reference files'
+
+form:
+  - bc_num_hours
+  - nextflow_version
+  - executor
+  - partition
+  - num_cores
+  - num_memory
+  - workdir
+  - input_output_options
+  - input
+  - outdir
+  - processing_options
+  - heatmap_id_column
+  - heatmap_genes_to_filter
+  - normalization_parameters
+  - normalization_method
+  - gene_score_computation
+  - gene_score_method
+  - gene_score_yaml
+  - skipping_options
+  - skip_heatmap
+  - reference_genome_options
+  - genome
+  - igenomes_ignore
+  - igenomes_base
+  - resume
+  - bc_email_on_started

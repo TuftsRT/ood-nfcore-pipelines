@@ -1,0 +1,60 @@
+<%
+require "json"
+
+strip_string = lambda do |value|
+  value.is_a?(String) ? value.strip : value
+end
+
+to_bool = lambda do |value|
+  case value
+  when true, false
+    value
+  when String
+    normalized = value.strip.downcase
+    next true if %w[true 1 yes y on].include?(normalized)
+    next false if %w[false 0 no n off].include?(normalized)
+    value
+  else
+    value
+  end
+end
+
+to_number = lambda do |value|
+  case value
+  when Integer, Float
+    value
+  when String
+    stripped = value.strip
+    next value if stripped.empty?
+    next stripped.to_i if stripped.match?(/\A[+-]?\d+\z/)
+    next stripped.to_f if stripped.match?(/\A[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?\z/)
+    value
+  else
+    value
+  end
+end
+
+to_number_or_bool = lambda do |value|
+  numeric = to_number.call(value)
+  return numeric unless numeric == value
+
+  boolean = to_bool.call(value)
+  return boolean unless boolean == value
+
+  value
+end
+
+params = {
+    "input": strip_string.call(context.input),
+    "ena_metadata_fields": strip_string.call(context.ena_metadata_fields),
+    "sample_mapping_fields": strip_string.call(context.sample_mapping_fields),
+    "nf_core_pipeline": strip_string.call(context.nf_core_pipeline),
+    "nf_core_rnaseq_strandedness": strip_string.call(context.nf_core_rnaseq_strandedness),
+    "download_method": strip_string.call(context.download_method),
+    "skip_fastq_download": to_bool.call(strip_string.call(context.skip_fastq_download)),
+    "dbgap_key": strip_string.call(context.dbgap_key),
+    "outdir": strip_string.call(context.outdir)
+}
+
+params.reject! { |_k, v| v.is_a?(String) && v.strip.empty? }
+%><%= JSON.pretty_generate(params) %>

@@ -1,0 +1,106 @@
+<%
+require "json"
+
+strip_string = lambda do |value|
+  value.is_a?(String) ? value.strip : value
+end
+
+to_bool = lambda do |value|
+  case value
+  when true, false
+    value
+  when String
+    normalized = value.strip.downcase
+    next true if %w[true 1 yes y on].include?(normalized)
+    next false if %w[false 0 no n off].include?(normalized)
+    value
+  else
+    value
+  end
+end
+
+to_number = lambda do |value|
+  case value
+  when Integer, Float
+    value
+  when String
+    stripped = value.strip
+    next value if stripped.empty?
+    next stripped.to_i if stripped.match?(/\A[+-]?\d+\z/)
+    next stripped.to_f if stripped.match?(/\A[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?\z/)
+    value
+  else
+    value
+  end
+end
+
+to_number_or_bool = lambda do |value|
+  numeric = to_number.call(value)
+  return numeric unless numeric == value
+
+  boolean = to_bool.call(value)
+  return boolean unless boolean == value
+
+  value
+end
+
+params = {
+    "input": strip_string.call(context.input),
+    "outdir": strip_string.call(context.outdir),
+    "ref_fasta": strip_string.call(context.ref_fasta),
+    "ref_gff": strip_string.call(context.ref_gff),
+    "strategy": strip_string.call(context.strategy),
+    "assembler": strip_string.call(context.assembler),
+    "assembly_scaffolding_order": strip_string.call(context.assembly_scaffolding_order),
+    "genome_size": strip_string.call(context.genome_size),
+    "flye_mode": strip_string.call(context.flye_mode),
+    "flye_args": strip_string.call(context.flye_args),
+    "hifiasm_args": strip_string.call(context.hifiasm_args),
+    "assembler_ont": strip_string.call(context.assembler_ont),
+    "assembler_ont_args": strip_string.call(context.assembler_ont_args),
+    "assembler_hifi": strip_string.call(context.assembler_hifi),
+    "assembler_hifi_args": strip_string.call(context.assembler_hifi_args),
+    "ontreads": strip_string.call(context.ontreads),
+    "ont_collect": to_bool.call(strip_string.call(context.ont_collect)),
+    "ont_adapters": strip_string.call(context.ont_adapters),
+    "ont_fastplong_args": strip_string.call(context.ont_fastplong_args),
+    "hifireads": strip_string.call(context.hifireads),
+    "hifi_adapters": strip_string.call(context.hifi_adapters),
+    "hifi_fastplong_args": strip_string.call(context.hifi_fastplong_args),
+    "jellyfish": to_bool.call(strip_string.call(context.jellyfish)),
+    "jellyfish_k": to_number.call(strip_string.call(context.jellyfish_k)),
+    "jellyfish_size": strip_string.call(context.jellyfish_size),
+    "polish": strip_string.call(context.polish),
+    "polish_pilon": to_bool.call(strip_string.call(context.polish_pilon)),
+    "polish_dorado": to_bool.call(strip_string.call(context.polish_dorado)),
+    "polish_medaka": to_bool.call(strip_string.call(context.polish_medaka)),
+    "medaka_model": strip_string.call(context.medaka_model),
+    "scaffold_longstitch": to_bool.call(strip_string.call(context.scaffold_longstitch)),
+    "scaffold_links": to_bool.call(strip_string.call(context.scaffold_links)),
+    "scaffold_ragtag": to_bool.call(strip_string.call(context.scaffold_ragtag)),
+    "scaffold_hic": to_bool.call(strip_string.call(context.scaffold_hic)),
+    "hic_aligner": strip_string.call(context.hic_aligner),
+    "merqury": to_bool.call(strip_string.call(context.merqury)),
+    "qc_reads": strip_string.call(context.qc_reads),
+    "busco": to_bool.call(strip_string.call(context.busco)),
+    "busco_db": strip_string.call(context.busco_db),
+    "busco_lineage": strip_string.call(context.busco_lineage),
+    "quast": to_bool.call(strip_string.call(context.quast)),
+    "ref_map_bam": strip_string.call(context.ref_map_bam),
+    "assembly": strip_string.call(context.assembly),
+    "assembly_map_bam": strip_string.call(context.assembly_map_bam),
+    "csi_index_size": to_number.call(strip_string.call(context.csi_index_size)),
+    "lift_annotations": to_bool.call(strip_string.call(context.lift_annotations)),
+    "use_short_reads": to_bool.call(strip_string.call(context.use_short_reads)),
+    "shortread_trim": to_bool.call(strip_string.call(context.shortread_trim)),
+    "meryl_k": to_number.call(strip_string.call(context.meryl_k)),
+    "shortread_F": strip_string.call(context.shortread_f),
+    "shortread_R": strip_string.call(context.shortread_r),
+    "paired": to_bool.call(strip_string.call(context.paired)),
+    "hic_trim": to_bool.call(strip_string.call(context.hic_trim)),
+    "hic_F": strip_string.call(context.hic_f),
+    "hic_R": strip_string.call(context.hic_r)
+}
+
+params.reject! { |_k, v| v.is_a?(String) && v.strip.empty? }
+%><%= JSON.pretty_generate(params) %>

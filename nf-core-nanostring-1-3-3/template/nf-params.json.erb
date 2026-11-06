@@ -1,0 +1,60 @@
+<%
+require "json"
+
+to_bool = lambda do |value|
+  case value
+  when true, false
+    value
+  when String
+    normalized = value.strip.downcase
+    next true if %w[true 1 yes y on].include?(normalized)
+    next false if %w[false 0 no n off].include?(normalized)
+    value
+  else
+    value
+  end
+end
+
+to_number = lambda do |value|
+  case value
+  when Integer, Float
+    value
+  when String
+    stripped = value.strip
+    next value if stripped.empty?
+    next stripped.to_i if stripped.match?(/\A[+-]?\d+\z/)
+    next stripped.to_f if stripped.match?(/\A[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?\z/)
+    value
+  else
+    value
+  end
+end
+
+to_number_or_bool = lambda do |value|
+  numeric = to_number.call(value)
+  return numeric unless numeric == value
+
+  boolean = to_bool.call(value)
+  return boolean unless boolean == value
+
+  value
+end
+
+params = {
+    "input": context.input,
+    "outdir": context.outdir,
+    "heatmap_id_column": context.heatmap_id_column,
+    "heatmap_genes_to_filter": context.heatmap_genes_to_filter,
+    "normalization_method": context.normalization_method,
+    "gene_score_method": context.gene_score_method,
+    "gene_score_yaml": context.gene_score_yaml,
+    "skip_heatmap": to_bool.call(context.skip_heatmap),
+    "genome": context.genome,
+    "igenomes_ignore": to_bool.call(context.igenomes_ignore),
+    "igenomes_base": context.igenomes_base
+}
+
+# Trim leading/trailing whitespace from typed values (paths, genome, tools, ...)
+params.transform_values! { |v| v.is_a?(String) ? v.strip : v }
+params.reject! { |_k, v| v.is_a?(String) && v.strip.empty? }
+%><%= JSON.pretty_generate(params) %>
