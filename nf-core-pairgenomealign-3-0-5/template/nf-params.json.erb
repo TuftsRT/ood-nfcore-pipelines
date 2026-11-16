@@ -1,0 +1,83 @@
+<%
+require "json"
+
+strip_string = lambda do |value|
+  value.is_a?(String) ? value.strip : value
+end
+
+to_bool = lambda do |value|
+  case value
+  when true, false
+    value
+  when String
+    normalized = value.strip.downcase
+    next true if %w[true 1 yes y on].include?(normalized)
+    next false if %w[false 0 no n off].include?(normalized)
+    value
+  else
+    value
+  end
+end
+
+to_number = lambda do |value|
+  case value
+  when Integer, Float
+    value
+  when String
+    stripped = value.strip
+    next value if stripped.empty?
+    next stripped.to_i if stripped.match?(/\A[+-]?\d+\z/)
+    next stripped.to_f if stripped.match?(/\A[+-]?(?:\d+\.?\d*|\.\d+)(?:[eE][+-]?\d+)?\z/)
+    value
+  else
+    value
+  end
+end
+
+to_number_or_bool = lambda do |value|
+  numeric = to_number.call(value)
+  return numeric unless numeric == value
+
+  boolean = to_bool.call(value)
+  return boolean unless boolean == value
+
+  value
+end
+
+params = {
+    "target": strip_string.call(context.target),
+    "query": strip_string.call(context.query),
+    "input": strip_string.call(context.input),
+    "targetName": strip_string.call(context.targetname),
+    "queryName": strip_string.call(context.queryname),
+    "skip_assembly_qc": to_bool.call(strip_string.call(context.skip_assembly_qc)),
+    "outdir": strip_string.call(context.outdir),
+    "multiqc_title": strip_string.call(context.multiqc_title),
+    "seed": strip_string.call(context.seed),
+    "softmask": strip_string.call(context.softmask),
+    "strand": strip_string.call(context.strand),
+    "m2m": to_bool.call(strip_string.call(context.mm2)),
+    "lastal_params": strip_string.call(context.lastal_params),
+    "lastal_args": strip_string.call(context.lastal_args),
+    "lastal_extr_args": strip_string.call(context.lastal_extr_args),
+    "last_split_mismap": strip_string.call(context.last_split_mismap),
+    "export_aln_to": strip_string.call(context.export_aln_to),
+    "multi_cram": to_bool.call(strip_string.call(context.multi_cram)),
+    "dotplot_width": to_number.call(strip_string.call(context.dotplot_width)),
+    "dotplot_height": to_number.call(strip_string.call(context.dotplot_height)),
+    "dotplot_font_size": to_number.call(strip_string.call(context.dotplot_font_size)),
+    "dotplot_options": strip_string.call(context.dotplot_options),
+    "skip_dotplot_o2m": to_bool.call(strip_string.call(context.skip_dotplot_om2)),
+    "skip_dotplot_o2o": to_bool.call(strip_string.call(context.skip_dotplot_oo2)),
+    "skip_dotplot_m2o": to_bool.call(strip_string.call(context.skip_dotplot_mo2)),
+    "skip_dotplot_m2m": to_bool.call(strip_string.call(context.skip_dotplot_mm2)),
+    "dotplot_filter": to_bool.call(strip_string.call(context.dotplot_filter)),
+    "multiqc_thumbs": to_number.call(strip_string.call(context.multiqc_thumbs)),
+    "genome": strip_string.call(context.genome),
+    "fasta": strip_string.call(context.fasta),
+    "igenomes_ignore": to_bool.call(strip_string.call(context.igenomes_ignore)),
+    "igenomes_base": strip_string.call(context.igenomes_base)
+}
+
+params.reject! { |_k, v| v.is_a?(String) && v.strip.empty? }
+%><%= JSON.pretty_generate(params) %>

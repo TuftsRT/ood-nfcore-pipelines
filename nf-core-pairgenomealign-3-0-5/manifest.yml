@@ -1,0 +1,8 @@
+---
+name: "pairgenomealign 3.0.5"
+category: ""
+subcategory: "genomics"
+role: batch_connect
+description: |
+  Launch the nf-core pipeline [nf-core-pairgenomealign](https://nf-co.re/pairgenomealign)
+  version 3.0.5 through Open OnDemand.

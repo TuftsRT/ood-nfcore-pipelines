@@ -1,0 +1,441 @@
+---
+cluster: "pax"
+form_header: |
+  > **Saved form values**
+  >
+  > This app automatically saves your form inputs between sessions.
+  >
+  > To clear the saved form values for this app, use the [cache reset utility](/pun/sys/cache_reset/?app_slug=nf-core-pairgenomealign-3-0-5&return_url=/pun/sys/dashboard/batch_connect/sys/nf-core-pairgenomealign-3-0-5/session_contexts/new).
+
+attributes:
+  bc_num_hours:
+    label: Number of hours
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Requested walltime for the launch job.
+
+  bc_email_on_started:
+    label: Email when job starts
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Send an email notification when the Open OnDemand launch job starts.
+
+  nextflow_version:
+    label: Nextflow version
+    widget: select
+    options:
+      - ["26.10.0", "26.10.0"]
+      - ["26.04.3", "26.04.3"]
+      - ["25.10.3", "25.10.3"]
+      - ["25.04.0", "25.04.0"]
+    help: Use an older Nextflow version when running previous nf-core pipeline releases.
+
+  partition:
+    widget: "select"
+    label: "Partition"
+    help: >-
+      Jobs submitted to the 'preempt' partition may be automatically killed to allow
+      higher-priority jobs to run. Select a specific lab partition if you belong to
+      that group.
+    options:
+      - ["batch", "batch"]
+
+  num_cores:
+    label: Number of cores
+    widget: number_field
+    value: 4
+    min: 1
+    step: 1
+    help: CPU count used for single-node local execution.
+
+  num_memory:
+    label: Amount of memory (GB)
+    widget: number_field
+    value: 8
+    min: 1
+    step: 1
+    help: Memory requested for single-node local execution.
+
+  executor:
+    label: Which Nextflow executor should be used?
+    widget: select
+    options:
+      - ["slurm", "slurm", data-hide-partition: true, data-hide-num-cores: true, data-hide-num-memory: true]
+      - ["local", "local"]
+    help: |
+      With `slurm`, the pipeline uses its configured scheduler profile.
+      With `local`, tasks run on the submitted node using a generated config.
+
+  workdir:
+    label: Working directory
+    widget: path_selector
+    required: false
+    directory: "/cluster/tufts"
+    favorites:
+      - "/cluster/tufts"
+    help: Directory where the Nextflow launch should run.
+
+  resume:
+    label: Resume previous run
+    widget: check_box
+    checked_value: 1
+    unchecked_value: 0
+    help: Resume a previous run if a matching Nextflow work directory exists.
+
+
+  input_output_options:
+    label: 'Input/output options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-target-when-un-checked: true
+        hide-query-when-un-checked: true
+        hide-input-when-un-checked: true
+        hide-targetname-when-un-checked: true
+        hide-queryname-when-un-checked: true
+        hide-skip_assembly_qc-when-un-checked: true
+        hide-outdir-when-un-checked: true
+        hide-multiqc_title-when-un-checked: true
+    help: 'Define where the pipeline should find input data and save output data.'
+
+  target:
+    label: 'target'
+    required: true
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'Path or URL to a FASTA genome file for the _target_ genome.'
+
+  query:
+    label: 'query'
+    widget: text_field
+    help: 'Path or URL to a FASTA genome file for the _query_ genome.'
+
+  input:
+    label: 'input'
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'Path to comma-separated file containing information about the samples in the experiment.'
+
+  targetname:
+    label: 'targetName'
+    widget: text_field
+    value: 'target'
+    help: 'Target genome name.'
+
+  queryname:
+    label: 'queryName'
+    widget: text_field
+    value: 'query'
+    help: 'Query genome name.'
+
+  skip_assembly_qc:
+    label: 'skip_assembly_qc'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Skip assembly QC.'
+
+  outdir:
+    label: 'outdir'
+    required: true
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'The output directory where the results will be saved. You have to use absolute paths to storage on Cloud infrastructure.'
+
+  multiqc_title:
+    label: 'multiqc_title'
+    widget: text_field
+    help: 'MultiQC report title. Printed as page header, used for filename if not otherwise specified.'
+
+  indexing_options:
+    label: 'Indexing options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-seed-when-un-checked: true
+        hide-softmask-when-un-checked: true
+        hide-strand-when-un-checked: true
+
+  seed:
+    label: 'seed'
+    widget: select
+    options:
+      - ['RY4', 'RY4']
+      - ['YASS', 'YASS']
+      - ['NEAR', 'NEAR']
+      - ['MAM4', 'MAM4']
+      - ['MAM8', 'MAM8']
+      - ['RY8', 'RY8']
+      - ['RY16', 'RY16']
+      - ['RY32', 'RY32']
+      - ['RY64', 'RY64']
+      - ['RY128', 'RY128']
+    help: 'Select the LAST seed to index the _target_ genome.'
+
+  softmask:
+    label: 'softmask'
+    widget: select
+    options:
+      - ['tantan', 'tantan']
+      - ['original', 'original']
+    help: 'Customise the way to mask the _target_ genome.'
+
+  strand:
+    label: 'strand'
+    widget: select
+    options:
+      - ['both', 'both']
+      - ['forward', 'forward']
+    help: 'Index both strand, or just one.'
+
+  alignment_options:
+    label: 'Alignment options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-mm2-when-un-checked: true
+        hide-lastal_params-when-un-checked: true
+        hide-lastal_args-when-un-checked: true
+        hide-lastal_extr_args-when-un-checked: true
+        hide-last_split_mismap-when-un-checked: true
+    help: 'Arguments for the lastdb, last-train, lastal and last-split programs.'
+
+  mm2:
+    label: 'm2m'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Make a many to many alignment'
+
+  lastal_params:
+    label: 'lastal_params'
+    widget: text_field
+    help: 'Path to a file containing alignment parameters or a scoring matrix. If this option is used, `last-train` will be skipped and alignment parameters will be the same for each query.'
+
+  lastal_args:
+    label: 'lastal_args'
+    widget: text_field
+    value: '-C2 -D1e9'
+    help: 'Arguments passed to both `last-train` and `lastal`.'
+
+  lastal_extr_args:
+    label: 'lastal_extr_args'
+    widget: text_field
+    help: 'Arguments passed only to `lastal` (useful when they are not recognised by `last-train`).'
+
+  last_split_mismap:
+    label: 'last_split_mismap'
+    widget: text_field
+    value: '1e-05'
+    help: 'Mismap probability cutoff for `last-split`.'
+
+  export_options:
+    label: 'Export options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-export_aln_to-when-un-checked: true
+        hide-multi_cram-when-un-checked: true
+    help: 'Export the alignments to various formats'
+
+  export_aln_to:
+    label: 'export_aln_to'
+    widget: text_field
+    value: 'no_export'
+    help: 'Convert the final _one-to-one_ alignment to a different format than MAF.'
+
+  multi_cram:
+    label: 'multi_cram'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Produce a multi-query CRAM file combining all the alignments.'
+
+  dotplot_parameters:
+    label: 'Dotplot parameters'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-dotplot_width-when-un-checked: true
+        hide-dotplot_height-when-un-checked: true
+        hide-dotplot_font_size-when-un-checked: true
+        hide-dotplot_options-when-un-checked: true
+        hide-skip_dotplot_om2-when-un-checked: true
+        hide-skip_dotplot_oo2-when-un-checked: true
+        hide-skip_dotplot_mo2-when-un-checked: true
+        hide-skip_dotplot_mm2-when-un-checked: true
+        hide-dotplot_filter-when-un-checked: true
+        hide-multiqc_thumbs-when-un-checked: true
+    help: 'Customise dot-plots or skip them.'
+
+  dotplot_width:
+    label: 'dotplot_width'
+    widget: number_field
+    value: 1200
+    step: 1
+    help: 'Maximum width of the dot plots, in pixels.'
+
+  dotplot_height:
+    label: 'dotplot_height'
+    widget: number_field
+    value: 10000
+    step: 1
+    help: 'Maximum height of the dot plots, in pixels.'
+
+  dotplot_font_size:
+    label: 'dotplot_font_size'
+    widget: number_field
+    value: 14
+    step: 1
+    help: 'Font size of the sequence names on the dot plots.'
+
+  dotplot_options:
+    label: 'dotplot_options'
+    widget: text_field
+    help: 'Extra arguments passed to `last-dotplot` to customise the output. See <https://gitlab.com/mcfrith/last/-/blob/main/doc/last-dotplot.rst>.'
+
+  skip_dotplot_om2:
+    label: 'skip_dotplot_o2m'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not generate the one-to-many alignment dot-plot.'
+
+  skip_dotplot_oo2:
+    label: 'skip_dotplot_o2o'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not generate the one-to-one alignment dot-plot.'
+
+  skip_dotplot_mo2:
+    label: 'skip_dotplot_m2o'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not generate the many-to-one alignment dot-plot.'
+
+  skip_dotplot_mm2:
+    label: 'skip_dotplot_m2m'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not generate the many-to-many alignment dot-plot.'
+
+  dotplot_filter:
+    label: 'dotplot_filter'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Remove isolated alignments with the `maf-filter` tool.'
+
+  multiqc_thumbs:
+    label: 'multiqc_thumbs'
+    widget: number_field
+    value: 0
+    step: 1
+    help: 'Size of the alignments thumbnails in MultiQC (default 0 turns it off; 100 is a good value to start with).'
+
+  reference_genome_options:
+    label: 'Reference genome options'
+    widget: 'check_box'
+    html_options:
+      data:
+        hide-genome-when-un-checked: true
+        hide-fasta-when-un-checked: true
+        hide-igenomes_ignore-when-un-checked: true
+        hide-igenomes_base-when-un-checked: true
+    help: 'Reference genome related files and options required for the workflow.'
+
+  genome:
+    label: 'genome'
+    widget: text_field
+    help: 'Name of iGenomes reference.'
+
+  fasta:
+    label: 'fasta'
+    widget: path_selector
+    directory: '/cluster/tufts'
+    favorites:
+      - '/cluster/tufts'
+    help: 'Path to FASTA genome file.'
+
+  igenomes_ignore:
+    label: 'igenomes_ignore'
+    widget: select
+    options:
+      - ['false', 'false']
+      - ['true', 'true']
+    help: 'Do not load the iGenomes reference config.'
+
+  igenomes_base:
+    label: 'igenomes_base'
+    widget: text_field
+    value: 's3://ngi-igenomes/igenomes/'
+    help: 'The base path to the igenomes reference files'
+
+form:
+  - bc_num_hours
+  - nextflow_version
+  - executor
+  - partition
+  - num_cores
+  - num_memory
+  - workdir
+  - input_output_options
+  - target
+  - query
+  - input
+  - targetname
+  - queryname
+  - skip_assembly_qc
+  - outdir
+  - multiqc_title
+  - indexing_options
+  - seed
+  - softmask
+  - strand
+  - alignment_options
+  - mm2
+  - lastal_params
+  - lastal_args
+  - lastal_extr_args
+  - last_split_mismap
+  - export_options
+  - export_aln_to
+  - multi_cram
+  - dotplot_parameters
+  - dotplot_width
+  - dotplot_height
+  - dotplot_font_size
+  - dotplot_options
+  - skip_dotplot_om2
+  - skip_dotplot_oo2
+  - skip_dotplot_mo2
+  - skip_dotplot_mm2
+  - dotplot_filter
+  - multiqc_thumbs
+  - reference_genome_options
+  - genome
+  - fasta
+  - igenomes_ignore
+  - igenomes_base
+  - resume
+  - bc_email_on_started
